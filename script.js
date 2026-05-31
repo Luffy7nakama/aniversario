@@ -1,27 +1,28 @@
 /* ══════════════════════════════════════════════════════
    ANIVERSARIO — script.js
-
-   👉 PARA PONER TU MÚSICA:
-      Pon tu archivo de música en la misma carpeta
-      y cambia "mi-cancion.mp3" por el nombre de tu archivo
-
-   👉 PARA CAMBIAR LA CONTRASEÑA:
-      Cambia "te amo" por la que quieras
-
-   👉 PARA CAMBIAR LAS FRASES DE LAS FOTOS:
-      Edita el array photoCaptions más abajo
+   📁 Las fotos van en la carpeta /fotos/
+   Nombra tus fotos: foto1.jpg, foto2.jpg ... foto8.jpg
 ══════════════════════════════════════════════════════ */
 
-// ══ CONTRASEÑA ══════════════════════════════
-const PASSWORD = "te amo";   // 👈 CAMBIA AQUÍ
+const PASSWORD   = "te amo";
+const MUSIC_FILE = "music/hecha.mp3";
 
+/* 
+  📸 FOTOS — Pon tus imágenes en la carpeta "fotos"
+  y cambia los nombres aquí si son diferentes.
+  Puedes usar .jpg .jpeg .png .webp
+*/
+const FOTOS = [
+  "imagen/4h.jpeg",
+  "imagen/2h.jpeg",
+  "imagen/12h.jpeg",
+  "imagen/88h.jpeg",
+  "imagen/5h.jpeg",
+  "imagen/6h.jpeg",
+  "imagen/7h.jpeg",
+  "imagen/9h.jpeg"
+];
 
-// ══ MÚSICA ══════════════════════════════════
-// Opción A: pon el nombre de tu archivo de música aquí
-//           (el archivo debe estar en la misma carpeta)
-const MUSIC_FILE = "music/hecha.mp3";  // 👈 Ej: "mi-cancion.mp3"   Deja vacío para usar la melodía automática
-
-// ══ FRASES DE LAS FOTOS ═════════════════════
 const photoCaptions = [
   "Nuestro momento favorito 💕",
   "Así te miro yo siempre 🌷",
@@ -33,35 +34,30 @@ const photoCaptions = [
   "El amor de mi vida ❤️"
 ];
 
-// ════════════════════════════════════════════
-// NO necesitas editar nada debajo de esta línea
-// ════════════════════════════════════════════
-
-
-// ── Partículas ambient ──
+/* ── Partículas ambient ── */
 (function spawnAmbient(){
-  const c = document.getElementById('ambient');
+  const c   = document.getElementById('ambient');
   const sym = ['🌷','💗','✨','🌸','💕','❤️','🌺','💖','✿','❀','🌼'];
   setInterval(() => {
     const p = document.createElement('div');
     p.className = 'ambient-p';
     p.textContent = sym[Math.floor(Math.random() * sym.length)];
-    p.style.left = Math.random() * 100 + 'vw';
-    p.style.fontSize = (.6 + Math.random() * .9) + 'rem';
+    p.style.left              = Math.random() * 100 + 'vw';
+    p.style.fontSize          = (.6 + Math.random() * .9) + 'rem';
     p.style.animationDuration = (7 + Math.random() * 9) + 's';
-    p.style.animationDelay = (Math.random() * 3) + 's';
+    p.style.animationDelay    = (Math.random() * 3) + 's';
     c.appendChild(p);
     setTimeout(() => p.remove(), 16000);
   }, 600);
 })();
 
-// ── Canvas estrellas de fondo ──
+/* ── Canvas estrellas ── */
 (function bgCanvas(){
-  const cv = document.getElementById('bg-canvas');
+  const cv  = document.getElementById('bg-canvas');
   const ctx = cv.getContext('2d');
   let stars = [];
   function init(){
-    cv.width = window.innerWidth;
+    cv.width  = window.innerWidth;
     cv.height = window.innerHeight;
     stars = [];
     for(let i = 0; i < 150; i++){
@@ -91,7 +87,7 @@ const photoCaptions = [
   window.addEventListener('resize', init);
 })();
 
-// ── Contraseña ──
+/* ── Contraseña ── */
 function checkPwd(){
   const v = document.getElementById('pwd').value.trim().toLowerCase();
   const e = document.getElementById('err');
@@ -108,7 +104,7 @@ function checkPwd(){
   }
 }
 
-// ── Splash de bienvenida ──
+/* ── Splash ── */
 function showUnlockSplash(){
   const splash = document.getElementById('unlock-splash');
   splash.classList.add('show');
@@ -127,20 +123,18 @@ function showUnlockSplash(){
   }, 2800);
 }
 
-// ── Música ──
+/* ── Música ── */
 let audioCtx = null, musicPlaying = false, gainNode = null;
 let customAudio = null;
 
 function autoPlayMusic(){
   if(MUSIC_FILE && MUSIC_FILE !== ""){
-    // Usar archivo de música propio
-    customAudio = new Audio(MUSIC_FILE);
-    customAudio.loop = true;
+    customAudio        = new Audio(MUSIC_FILE);
+    customAudio.loop   = true;
     customAudio.volume = 0.7;
     customAudio.play().catch(() => {});
     musicPlaying = true;
   } else {
-    // Melodía automática
     buildSynthMusic();
   }
   updateMusicBar();
@@ -148,23 +142,23 @@ function autoPlayMusic(){
 
 function buildSynthMusic(){
   if(audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  gainNode = audioCtx.createGain();
+  audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+  gainNode  = audioCtx.createGain();
   gainNode.gain.value = .18;
   gainNode.connect(audioCtx.destination);
-  const notes = [261.6,293.7,329.6,349.2,392,440,493.9,523.3];
+  const notes  = [261.6,293.7,329.6,349.2,392,440,493.9,523.3];
   const melody = [0,2,4,5,7,5,4,2,0,2,4,7,5,4,2,0,4,5,7,9,7,5,4,2];
-  const dur = .5;
-  let t = audioCtx.currentTime;
+  const dur    = .5;
+  let t        = audioCtx.currentTime;
   function playMelody(){
-    melody.forEach((ni, i) => {
+    melody.forEach((ni,i) => {
       const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = 'sine';
+      const g   = audioCtx.createGain();
+      osc.type            = 'sine';
       osc.frequency.value = notes[ni % notes.length];
       g.gain.setValueAtTime(0, t + i * dur);
       g.gain.linearRampToValueAtTime(.18, t + i * dur + .08);
-      g.gain.linearRampToValueAtTime(0, t + i * dur + dur - .05);
+      g.gain.linearRampToValueAtTime(0,   t + i * dur + dur - .05);
       osc.connect(g); g.connect(gainNode);
       osc.start(t + i * dur); osc.stop(t + i * dur + dur);
     });
@@ -178,11 +172,11 @@ function buildSynthMusic(){
 function toggleMusic(){
   if(customAudio){
     if(musicPlaying){ customAudio.pause(); musicPlaying = false; }
-    else { customAudio.play(); musicPlaying = true; }
+    else            { customAudio.play();  musicPlaying = true;  }
   } else {
-    if(!audioCtx){ buildSynthMusic(); musicPlaying = true; }
-    else if(musicPlaying){ gainNode.gain.value = 0; musicPlaying = false; }
-    else { gainNode.gain.value = .18; musicPlaying = true; }
+    if(!audioCtx)       { buildSynthMusic(); musicPlaying = true; }
+    else if(musicPlaying){ gainNode.gain.value = 0;   musicPlaying = false; }
+    else                 { gainNode.gain.value = .18; musicPlaying = true;  }
   }
   updateMusicBar();
 }
@@ -199,7 +193,7 @@ function updateMusicBar(){
   }
 }
 
-// ── Botón Feliz Aniversario ──
+/* ── Popup aniversario ── */
 function triggerAnniversary(){
   launchTulips(window.innerWidth / 2, window.innerHeight / 2, 65);
   setTimeout(() => document.getElementById('love-popup').classList.add('show'), 600);
@@ -208,30 +202,30 @@ function closePopup(){
   document.getElementById('love-popup').classList.remove('show');
 }
 
-// ── Botón mágico (última página) ──
+/* ── Botón mágico ── */
 function triggerMagic(){
-  launchTulips(window.innerWidth / 2, window.innerHeight * 0.6, 120);
+  launchTulips(window.innerWidth / 2,   window.innerHeight * 0.6, 120);
   launchTulips(window.innerWidth * 0.1, window.innerHeight * 0.5, 40);
   launchTulips(window.innerWidth * 0.9, window.innerHeight * 0.5, 40);
 }
 
-// ── Lanzar tulipanes ──
+/* ── Tulipanes ── */
 function launchTulips(cx, cy, count){
   const layer = document.getElementById('tulip-layer');
-  const t = ['🌷','🌸','🌺','💮','🌼','🏵️','💕','💗','✨','🌻','❤️','💖'];
+  const t     = ['🌷','🌸','🌺','💮','🌼','🏵️','💕','💗','✨','🌻','❤️','💖'];
   for(let i = 0; i < count; i++){
-    const el = document.createElement('div');
+    const el     = document.createElement('div');
     el.className = 'tulip-p';
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 120 + Math.random() * 420;
+    const angle  = Math.random() * Math.PI * 2;
+    const dist   = 120 + Math.random() * 420;
     el.style.cssText = `
-      left:${cx - 20}px; top:${cy}px;
-      font-size:${1 + Math.random() * 2}rem;
-      --vx:${Math.cos(angle) * dist}px;
-      --vy:${(-150 + Math.random() * -450)}px;
-      --rot:${-200 + Math.random() * 400}deg;
-      animation-duration:${1.2 + Math.random() * 1.6}s;
-      animation-delay:${Math.random() * .5}s;
+      left:${cx-20}px;top:${cy}px;
+      font-size:${1+Math.random()*2}rem;
+      --vx:${Math.cos(angle)*dist}px;
+      --vy:${-150+Math.random()*-450}px;
+      --rot:${-200+Math.random()*400}deg;
+      animation-duration:${1.2+Math.random()*1.6}s;
+      animation-delay:${Math.random()*.5}s;
     `;
     el.textContent = t[Math.floor(Math.random() * t.length)];
     layer.appendChild(el);
@@ -239,42 +233,53 @@ function launchTulips(cx, cy, count){
   }
 }
 
-// ── Galería de fotos ──
+/* ══════════════════════════════════════════════════════
+   GALERÍA — carga las fotos desde la carpeta /fotos/
+   Si una foto no existe, muestra un marco vacío bonito
+══════════════════════════════════════════════════════ */
 function buildGallery(){
   const g = document.getElementById('gallery-grid');
   if(g.children.length > 0) return;
-  for(let i = 0; i < 8; i++){
-    const s = document.createElement('div');
+
+  FOTOS.forEach((src, i) => {
+    const s     = document.createElement('div');
     s.className = 'photo-slot';
-    s.innerHTML = `
-      <img id="pi${i}" alt="">
-      <div class="ph-placeholder">
-        <span class="ic">📷</span>
-        <span>Agregar foto</span>
-      </div>
-      <div class="photo-caption"><span>${photoCaptions[i] || '💕'}</span></div>
-      <input type="file" accept="image/*" onchange="loadPh(this,${i})">
-    `;
+
+    const img   = document.createElement('img');
+    img.alt     = photoCaptions[i] || '';
+    img.src     = src;
+
+    /* Si la imagen carga bien, mostrarla */
+    img.onload = function(){
+      img.classList.add('loaded');
+      s.querySelector('.ph-placeholder').style.display = 'none';
+    };
+
+    /* Si no existe el archivo, mostrar el marco vacío */
+    img.onerror = function(){
+      img.style.display = 'none';
+    };
+
+    const placeholder = document.createElement('div');
+    placeholder.className = 'ph-placeholder';
+    placeholder.innerHTML = `<span class="ic">📷</span><span>${'foto' + (i+1) + '.jpg'}</span>`;
+
+    const caption = document.createElement('div');
+    caption.className = 'photo-caption';
+    caption.innerHTML = `<span>${photoCaptions[i] || '💕'}</span>`;
+
+    s.appendChild(img);
+    s.appendChild(placeholder);
+    s.appendChild(caption);
     g.appendChild(s);
-  }
-}
-function loadPh(inp, i){
-  const f = inp.files[0]; if(!f) return;
-  const r = new FileReader();
-  r.onload = e => {
-    const img = document.getElementById('pi' + i);
-    img.src = e.target.result;
-    img.classList.add('loaded');
-    img.closest('.photo-slot').querySelector('.ph-placeholder').style.display = 'none';
-  };
-  r.readAsDataURL(f);
+  });
 }
 
-// ── Contador de tiempo ──
+/* ── Contador ── */
 function checkDateModal(){
   const s = localStorage.getItem('aniDate3');
   if(!s){ document.getElementById('dateModal').classList.remove('hidden'); }
-  else { updateDisp(s); startTick(new Date(s)); }
+  else  { updateDisp(s); startTick(new Date(s)); }
 }
 function saveDate(){
   const v = document.getElementById('startDate').value;
@@ -291,35 +296,35 @@ function resetDate(){
 function updateDisp(v){
   const d = new Date(v + 'T00:00:00');
   document.getElementById('date-display').textContent =
-    d.toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'});
+    d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
 }
 let _tick;
 function startTick(start){
   clearInterval(_tick);
   function update(){
     const now = new Date();
-    const s = new Date(start);
-    let yr = now.getFullYear() - s.getFullYear();
-    let mo = now.getMonth() - s.getMonth();
+    const s   = new Date(start);
+    let yr    = now.getFullYear() - s.getFullYear();
+    let mo    = now.getMonth()    - s.getMonth();
     if(mo < 0){ yr--; mo += 12; }
     const tmp = new Date(s);
     tmp.setFullYear(tmp.getFullYear() + yr);
     tmp.setMonth(tmp.getMonth() + mo);
-    const dy = Math.floor((now - tmp) / 864e5);
-    document.getElementById('cy').textContent = yr;
-    document.getElementById('cm').textContent = mo;
-    document.getElementById('cd').textContent = dy;
-    document.getElementById('ch').textContent = now.getHours();
+    const dy  = Math.floor((now - tmp) / 864e5);
+    document.getElementById('cy').textContent   = yr;
+    document.getElementById('cm').textContent   = mo;
+    document.getElementById('cd').textContent   = dy;
+    document.getElementById('ch').textContent   = now.getHours();
     document.getElementById('cmin').textContent = String(now.getMinutes()).padStart(2,'0');
   }
   update(); _tick = setInterval(update, 10000);
 }
 
-// ── Scroll reveal ──
+/* ── Reveal ── */
 function observeReveal(){
   const els = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver(ents => {
+  const io  = new IntersectionObserver(ents => {
     ents.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-  }, {threshold: .1});
+  },{threshold:.1});
   els.forEach(el => io.observe(el));
 }
