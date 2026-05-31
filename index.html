@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💕 Nuestro Amor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="ambient"></div>
+<div id="tulip-layer"></div>
+
+<!-- ════ POPUP DE AMOR (botón Feliz Aniversario) ════ -->
+<div id="love-popup">
+  <div class="popup-card">
+    <span class="popup-roses">🌷🌸🌷🌺🌸🌷</span>
+    <div class="popup-te-amo">Te Amo</div>
+    <p class="popup-phrase">
+      Eres todo para mí.<br>
+      Eres el amor de mi vida.<br>
+      Cada día que pasa me enamoro más y más de ti.<br>
+      Gracias por existir y por ser mía.
+    </p>
+    <div class="popup-sub">🌷 ¡Feliz Aniversario, mi vida! 🌷</div>
+    <button class="popup-close" onclick="closePopup()">Cerrar con amor 💕</button>
+  </div>
+</div>
+
+<!-- ════ MODAL DE FECHA ════ -->
+<div class="date-modal hidden" id="dateModal">
+  <div class="date-box">
+    <h3>Nuestra fecha</h3>
+    <p>Ingresa la fecha en que empezó nuestra historia de amor 💕</p>
+    <input type="date" id="startDate">
+    <button class="date-save" onclick="saveDate()">Guardar ✨</button>
+  </div>
+</div>
+
+<!-- ════ SPLASH AL DESBLOQUEAR ════ -->
+<div id="unlock-splash">
+  <div class="splash-heart">💗</div>
+  <div class="splash-title">¡Feliz Aniversario!</div>
+  <div class="splash-sub">Te Amo con todo mi corazón 💕</div>
+  <div class="splash-tulips">🌷🌸🌺🌸🌷</div>
+</div>
+
+<!-- ════ PANTALLA DE CONTRASEÑA ════ -->
+<div id="lock">
+  <div class="bokeh" style="width:450px;height:450px;top:-120px;left:-120px;animation-duration:6s;"></div>
+  <div class="bokeh" style="width:320px;height:320px;bottom:-90px;right:-90px;animation-duration:8s;animation-delay:2s;"></div>
+  <div class="bokeh" style="width:220px;height:220px;top:40%;left:10%;animation-duration:7s;animation-delay:1s;"></div>
+  <div class="lock-wrap">
+    <div class="lock-emblem">💗</div>
+    <h1 class="lock-title">Solo para ti, mi amor</h1>
+    <p class="lock-sub">Ingresa la contraseña secreta</p>
+    <div class="pwd-group">
+      <input type="password" id="pwd" placeholder="Escribe aquí..." maxlength="30"
+             onkeydown="if(event.key==='Enter') checkPwd()">
+    </div>
+    <button class="open-btn" onclick="checkPwd()">💖 Abrir con amor</button>
+    <p id="err"></p>
+    <p class="hint">Pista: lo que siento por ti cada día 🌷</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PÁGINA PRINCIPAL (se muestra al desbloquear)
+════════════════════════════════════════════ -->
+<div id="main">
+
+  <!-- Barra de música (esquina derecha) -->
+  <div id="music-bar" onclick="toggleMusic()" title="Reproducir / Pausar">
+    <div class="bars">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div>
+    </div>
+    <span class="music-label" id="music-label">♫ Música</span>
+  </div>
+
+  <!-- ──────────────────────────────
+       SECCIÓN 1 — INICIO / HERO
+  ────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-badge">✦ Nuestro Aniversario Especial ✦</div>
+    <span class="hero-heart">💗</span>
+    <h1 class="te-amo-big">Te Amo</h1>
+    <p class="te-amo-sub">y te amaré toda la vida</p>
+    <div class="hero-divider"></div>
+    <p class="hero-poem">
+      Cada mirada tuya es mi universo entero,<br>
+      cada abrazo tuyo es mi hogar más sincero.<br>
+      Gracias por elegirme, por quedarte, por ser<br>
+      la persona más hermosa que llegó a mi ser.
+    </p>
+    <div class="anni-wrap">
+      <button class="anni-btn" onclick="triggerAnniversary()">
+        <span class="shine"></span>
+        ¡Feliz Aniversario!
+      </button>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────
+       SECCIÓN 2 — CONTADOR DE TIEMPO
+  ────────────────────────────── -->
+  <section class="counter-bg reveal">
+    <div style="max-width:700px;margin:0 auto;">
+      <h2 class="section-title">Nuestro tiempo juntos</h2>
+      <div class="counters">
+        <div class="count-unit"><span class="count-num" id="cy">0</span><span class="count-label">Años</span></div>
+        <div class="count-unit"><span class="count-num" id="cm">0</span><span class="count-label">Meses</span></div>
+        <div class="count-unit"><span class="count-num" id="cd">0</span><span class="count-label">Días</span></div>
+        <div class="count-unit"><span class="count-num" id="ch">0</span><span class="count-label">Horas</span></div>
+        <div class="count-unit"><span class="count-num" id="cmin">00</span><span class="count-label">Minutos</span></div>
+      </div>
+      <p style="margin-top:2rem;color:var(--muted);font-size:.88rem;letter-spacing:.08em;text-align:center;">
+        📅 <span id="date-display">—</span>
+        <button onclick="resetDate()" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.82rem;margin-left:.6rem;text-decoration:underline;font-family:inherit;">Cambiar fecha</button>
+      </p>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────
+       SECCIÓN 3 — FRASES DE AMOR
+       (puedes editar el texto aquí)
+  ────────────────────────────── -->
+  <section class="quotes-bg reveal">
+    <div class="quotes-inner">
+      <h2 class="section-title">Palabras de mi corazón</h2>
+      <div class="quotes-grid">
+
+        <div class="qcard">
+          <span class="qicon">🌷</span>
+          <p class="qtext">Eres la razón más bella por la que cada mañana tiene sentido. Despertar sabiendo que existes en mi vida es el mejor regalo que el universo me ha dado.</p>
+          <p class="qauthor">— Solo para ti, siempre</p>
+        </div>
+
+        <div class="qcard">
+          <span class="qicon">💗</span>
+          <p class="qtext">Si pudiera volver a elegir, te elegiría a ti. Una y otra vez, en cada vida, en cada universo posible, mi corazón siempre te encontraría a ti.</p>
+          <p class="qauthor">— Con toda mi alma</p>
+        </div>
+
+        <div class="qcard">
+          <span class="qicon">✨</span>
+          <p class="qtext">Tu sonrisa es mi lugar favorito en el mundo entero. Cuando ríes, todo se vuelve más brillante y todo vuelve a tener sentido para mí.</p>
+          <p class="qauthor">— Enamorado de tu risa</p>
+        </div>
+
+        <div class="qcard">
+          <span class="qicon">🌸</span>
+          <p class="qtext">Gracias por cada abrazo que calma mis tormentas, por cada palabra que ilumina mis noches. Eres mi paz, mi calma y mi hogar perfecto.</p>
+          <p class="qauthor">— Agradecido eternamente</p>
+        </div>
+
+        <div class="qcard">
+          <span class="qicon">💕</span>
+          <p class="qtext">No necesito el mundo entero cuando te tengo a ti. Tu presencia convierte los momentos más ordinarios en magia pura e inolvidable.</p>
+          <p class="qauthor">— Tu amor es mi hogar</p>
+        </div>
+
+        <div class="qcard">
+          <span class="qicon">🌺</span>
+          <p class="qtext">Cada día me enamoro de ti de maneras nuevas. Descubrirte es mi aventura favorita, quererte es mi propósito más hermoso en esta vida.</p>
+          <p class="qauthor">— Para siempre tuyo</p>
+        </div>
+
+        <div class="qcard">
+          <span class="qicon">💖</span>
+          <p class="qtext">Contigo he aprendido que el amor se siente en cada mirada, en cada silencio, en cada momento compartido. Eres mi amor verdadero.</p>
+          <p class="qauthor">— El amor de mi vida</p>
+        </div>
+
+        <div class="qcard">
+          <span class="qicon">🌷</span>
+          <p class="qtext">Eres lo más bonito que me ha pasado. La persona que me hace querer ser mejor cada día. Gracias por amarme con tanta fuerza y ternura.</p>
+          <p class="qauthor">— Tuyo por siempre</p>
+        </div>
+
+        <div class="qcard">
+          <span class="qicon">⭐</span>
+          <p class="qtext">Cuando pienso en felicidad, pienso en ti. Cuando pienso en amor, pienso en ti. Cuando pienso en todo lo que quiero, pienso en ti.</p>
+          <p class="qauthor">— Solo tú, siempre tú</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────
+       SECCIÓN 4 — GALERÍA DE FOTOS
+       (haz clic en cada marco para subir tu foto)
+  ────────────────────────────── -->
+  <section class="gallery-section reveal">
+    <div class="gallery-inner">
+      <h2 class="section-title">Nuestros Momentos</h2>
+      <p style="text-align:center;color:var(--muted);font-size:.92rem;margin-bottom:2.5rem;">
+        Haz clic en cada marco para agregar tus fotos 📸
+        
+      </p>
+      <!-- Las fotos se generan automáticamente con JavaScript -->
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────
+       SECCIÓN 5 — CARTAS DE AMOR
+       (puedes editar el texto aquí)
+  ────────────────────────────── -->
+  <section class="letters-section reveal">
+    <div style="max-width:960px;margin:0 auto;">
+      <h2 class="section-title">Cartas desde el corazón</h2>
+      <div class="letters-grid">
+
+        <div class="letter-card">
+          <span class="letter-num">I</span>
+          <span class="letter-icon">💌</span>
+          <div class="letter-card-title">Mi primer amor</div>
+          <p class="letter-card-text">Recuerdo el momento exacto en que me di cuenta de que me había enamorado de ti. Fue como si el mundo se detuviera y todo tuviera sentido por primera vez.</p>
+          <div class="letter-sign-small">— Tuyo para siempre 🌷</div>
+        </div>
+
+        <div class="letter-card">
+          <span class="letter-num">II</span>
+          <span class="letter-icon">✨</span>
+          <div class="letter-card-title">Lo que más amo de ti</div>
+          <p class="letter-card-text">Amo tu manera de reír, la forma en que me miras, tu voz cuando me llamas. Amo cada pequeño detalle tuyo que hace que mi corazón lata más rápido.</p>
+          <div class="letter-sign-small">— Con todo mi amor 💕</div>
+        </div>
+
+        <div class="letter-card">
+          <span class="letter-num">III</span>
+          <span class="letter-icon">🌸</span>
+          <div class="letter-card-title">Gracias por estar</div>
+          <p class="letter-card-text">Gracias por quedarte en los días difíciles, por celebrar mis logros, por hacerme sentir amado incluso cuando el mundo está al revés. Eres mi ancla.</p>
+          <div class="letter-sign-small">— Eternamente agradecido 🌷</div>
+        </div>
+
+        <div class="letter-card">
+          <span class="letter-num">IV</span>
+          <span class="letter-icon">🌷</span>
+          <div class="letter-card-title">Promesas de amor</div>
+          <p class="letter-card-text">Te prometo seguir eligiéndote cada día, amarte en tus momentos de luz y en tus tormentas, y construir juntos la historia de amor más bonita del mundo.</p>
+          <div class="letter-sign-small">— Lo prometo de corazón 💖</div>
+        </div>
+
+        <div class="letter-card">
+          <span class="letter-num">V</span>
+          <span class="letter-icon">💗</span>
+          <div class="letter-card-title">Nuestro futuro</div>
+          <p class="letter-card-text">Cuando pienso en el futuro, te veo a ti. En cada sueño, en cada plan, en cada aventura que imagino, siempre estás tú. Y no lo cambiaría por nada.</p>
+          <div class="letter-sign-small">— Contigo para siempre ✨</div>
+        </div>
+
+        <div class="letter-card">
+          <span class="letter-num">VI</span>
+          <span class="letter-icon">🌺</span>
+          <div class="letter-card-title">Eres todo para mí</div>
+          <p class="letter-card-text">No hay palabras suficientes para decirte cuánto significas para mí. Eres mi sol, mi luna, mis estrellas. Eres todo. Absolutamente todo en mi vida.</p>
+          <div class="letter-sign-small">— El amor de tu vida 💕</div>
+        </div>
+
+      </div><!-- /letters-grid -->
+
+      <!-- Carta grande final -->
+      <div class="big-letter-wrap">
+        <div class="letter-decor tl">"</div>
+        <div class="letter-decor br">"</div>
+        <div class="letter-box">
+          <span class="letter-ornament">✦ ❧ ✦</span>
+          <p class="letter-text">
+            Mi amor,<br><br>
+            Si estás leyendo esto es porque eres la persona más especial
+            que  ha llegado a mi vida. Hay palabras que no saben
+            cómo salir, pero el corazón las grita con toda su fuerza:<br>
+            <em>te amo, te amo muchísimo, te amo con todo lo que soy.</em><br><br>
+            Amo tu manera de ver el mundo. Amo cómo me haces sentir que
+            todo vale la pena solo por estar a tu lado. Amo nuestras
+            conversaciones interminables, nuestras risas que no se pueden
+            detener, nuestros silencios que dicen más que mil palabras.<br><br>
+            Gracias por ser exactamente quien eres.
+            Por quedarte. Por amarme como lo haces.
+            Eres el amor de mi vida y lo serás para siempre.<br><br>
+            Hoy, mañana y todos los días que vengan,
+            quiero vivir cada aventura, cada sueño, cada momento
+            de la mano contigo, mi amor eterno.<br><br>
+            Con todo mi corazón,
+          </p>
+          <div class="letter-sign">Tu persona favorita 💕</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────
+       SECCIÓN 6 — PÁGINA FINAL
+       con el botón mágico de flores
+  ────────────────────────────── -->
+  <section class="final-page reveal">
+    <div class="final-heart-big">💗</div>
+    <div class="final-title">Te Amo</div>
+    <div class="final-sub">
+      Eres todo para mí · Eres el amor de mi vida<br>
+      ¡Feliz Aniversario, mi amor! 🌷
+    </div>
+    <div class="magic-btn-wrap">
+      <button class="magic-btn" onclick="triggerMagic()">
+        <span class="shine"></span>
+        🌷 ¡Presiona aquí! 🌷
+      </button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-ornament">🌷 💗 🌷</div>
+    <p class="footer-text">Hecho con todo el amor del mundo · Solo para ti · Para siempre 💕</p>
+  </footer>
+
+</div><!-- /main -->
+
+<script src="script.js"></script>
+</body>
+</html>
